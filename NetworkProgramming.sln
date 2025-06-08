@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.35931.194
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IPcalc", "IPcalc\IPcalc.vcxproj", "{73394CF2-D5D0-4EBF-9EC0-ABF29873265D}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IP_Calc", "IP_Calc\IP_Calc.vcxproj", "{10762557-1185-44F7-9BB2-9E3786241591}"
 EndProject
 Global
@@ -15,14 +13,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{73394CF2-D5D0-4EBF-9EC0-ABF29873265D}.Debug|x64.ActiveCfg = Debug|x64
-		{73394CF2-D5D0-4EBF-9EC0-ABF29873265D}.Debug|x64.Build.0 = Debug|x64
-		{73394CF2-D5D0-4EBF-9EC0-ABF29873265D}.Debug|x86.ActiveCfg = Debug|Win32
-		{73394CF2-D5D0-4EBF-9EC0-ABF29873265D}.Debug|x86.Build.0 = Debug|Win32
-		{73394CF2-D5D0-4EBF-9EC0-ABF29873265D}.Release|x64.ActiveCfg = Release|x64
-		{73394CF2-D5D0-4EBF-9EC0-ABF29873265D}.Release|x64.Build.0 = Release|x64
-		{73394CF2-D5D0-4EBF-9EC0-ABF29873265D}.Release|x86.ActiveCfg = Release|Win32
-		{73394CF2-D5D0-4EBF-9EC0-ABF29873265D}.Release|x86.Build.0 = Release|Win32
 		{10762557-1185-44F7-9BB2-9E3786241591}.Debug|x64.ActiveCfg = Debug|x64
 		{10762557-1185-44F7-9BB2-9E3786241591}.Debug|x64.Build.0 = Debug|x64
 		{10762557-1185-44F7-9BB2-9E3786241591}.Debug|x86.ActiveCfg = Debug|Win32
