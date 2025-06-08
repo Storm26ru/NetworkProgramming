@@ -1,4 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS
+п»ї#define _CRT_SECURE_NO_WARNINGS
 #include<Windows.h>
 #include<CommCtrl.h>
 #include<iostream>
@@ -76,7 +76,7 @@ BOOL CALLBACK DlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			sprintf(bufer_numberIP, "%i", dwnumberIP);
 			sprintf(bufer_nodesIP, "%i", dwnodesIP);
 			sprintf(bufer_info,
-				"Адрес сети:\t\t\%s\nШироковещательный адрес:\t%s\nКоличество IP-адресов:\t%s\nКоличество узлов:\t\t%s",
+				"РђРґСЂРµСЃ СЃРµС‚Рё:\t\t\%s\nРЁРёСЂРѕРєРѕРІРµС‰Р°С‚РµР»СЊРЅС‹Р№ Р°РґСЂРµСЃ:\t%s\nРљРѕР»РёС‡РµСЃС‚РІРѕ IP-Р°РґСЂРµСЃРѕРІ:\t%s\nРљРѕР»РёС‡РµСЃС‚РІРѕ СѓР·Р»РѕРІ:\t\t%s",
 				bufer_netIP, bufer_broadcastIP, bufer_numberIP, bufer_nodesIP);
 			MessageBox(hWnd,bufer_info,"INFO", MB_ICONINFORMATION);
 		}
@@ -139,7 +139,7 @@ VOID Info(HWND hWnd)
 	sprintf(bufer_numberIP, "%i", dwnumberIP);
 	sprintf(bufer_nodesIP, "%i", dwnodesIP);
 	sprintf(bufer_info,
-		"Адрес сети:\t\t\t%s\nШироковещательный адрес:\t%s\nКоличество IP-адресов:\t%s\nКоличество узлов:\t\t%s",
+		"РђРґСЂРµСЃ СЃРµС‚Рё:\t\t\t%s\nРЁРёСЂРѕРєРѕРІРµС‰Р°С‚РµР»СЊРЅС‹Р№ Р°РґСЂРµСЃ:\t%s\nРљРѕР»РёС‡РµСЃС‚РІРѕ IP-Р°РґСЂРµСЃРѕРІ:\t%s\nРљРѕР»РёС‡РµСЃС‚РІРѕ СѓР·Р»РѕРІ:\t\t%s",
 		bufer_netIP, bufer_broadcastIP, bufer_numberIP, bufer_nodesIP);
 	SendMessage(hInfo, WM_SETTEXT, 0, (LPARAM)bufer_info);
 }
