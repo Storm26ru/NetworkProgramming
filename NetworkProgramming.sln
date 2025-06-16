@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IP_Calc", "IP_Calc\IP_Calc.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WinSockClient", "WinSockClient\WinSockClient.vcxproj", "{AD097BEA-949D-4EA7-AC53-5128194BBD0B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FormatLastError", "FormatLastError\FormatLastError.vcxproj", "{4889292E-A9E6-437F-BBB8-8F0707C5A5B3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{AD097BEA-949D-4EA7-AC53-5128194BBD0B}.Release|x64.Build.0 = Release|x64
 		{AD097BEA-949D-4EA7-AC53-5128194BBD0B}.Release|x86.ActiveCfg = Release|Win32
 		{AD097BEA-949D-4EA7-AC53-5128194BBD0B}.Release|x86.Build.0 = Release|Win32
+		{4889292E-A9E6-437F-BBB8-8F0707C5A5B3}.Debug|x64.ActiveCfg = Debug|x64
+		{4889292E-A9E6-437F-BBB8-8F0707C5A5B3}.Debug|x64.Build.0 = Debug|x64
+		{4889292E-A9E6-437F-BBB8-8F0707C5A5B3}.Debug|x86.ActiveCfg = Debug|Win32
+		{4889292E-A9E6-437F-BBB8-8F0707C5A5B3}.Debug|x86.Build.0 = Debug|Win32
+		{4889292E-A9E6-437F-BBB8-8F0707C5A5B3}.Release|x64.ActiveCfg = Release|x64
+		{4889292E-A9E6-437F-BBB8-8F0707C5A5B3}.Release|x64.Build.0 = Release|x64
+		{4889292E-A9E6-437F-BBB8-8F0707C5A5B3}.Release|x86.ActiveCfg = Release|Win32
+		{4889292E-A9E6-437F-BBB8-8F0707C5A5B3}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
