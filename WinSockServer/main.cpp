@@ -1,3 +1,5 @@
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include <stdio.h>
@@ -62,8 +64,57 @@ void main()
 		return;
 	}
 
-	iResult = listen(listen_socket,)
+	iResult = listen(listen_socket, SOMAXCONN);
+	if (iResult == SOCKET_ERROR)
+	{
+		cout << "listen() failed with ";
+		PrintLastError(WSAGetLastError());
+		closesocket(listen_socket);
+		freeaddrinfo(result);
+		WSACleanup();
+		return;
+	}
 
+	cout << "Waiting for clients..." << endl;
+	SOCKET client_socket = accept(listen_socket,NULL,NULL);
+	if (client_socket == INVALID_SOCKET)
+	{
+		cout << "accept() failed with ";
+		PrintLastError(WSAGetLastError());
+		closesocket(listen_socket);
+		freeaddrinfo(result);
+		WSACleanup();
+		return;
+	}
+	sockaddr_in address; //https://club.shelek.ru/viewart.php?id=41
+	int len = sizeof(address);
+	ZeroMemory(&address, len);
+	getsockname(client_socket, (sockaddr*)&address, &len);
+	cout << "адрес :"<<inet_ntoa(address.sin_addr) << endl;
 
-
+	CHAR recvbuffer[DEFAULT_BUFFER_LENGTH]{};
+	do
+	{
+		iResult = recv(client_socket, recvbuffer, DEFAULT_BUFFER_LENGTH, 0);
+		if (iResult > 0)
+		{
+			cout << "Received Bytes: " << iResult << ", Message: " << recvbuffer << endl;
+			if (send(client_socket, recvbuffer, strlen(recvbuffer), 0) == SOCKET_ERROR)
+			{
+				cout << "send() failed with ";
+				PrintLastError(WSAGetLastError());
+				break;
+			}
+		}
+		else if (iResult == 0)cout << "Connection closing..." << endl;
+		else
+		{
+			cout << "recv() failed with ";
+			PrintLastError(WSAGetLastError());
+		}
+	} while (iResult > 0);
+	closesocket(client_socket);
+	closesocket(listen_socket);
+	freeaddrinfo(result);
+	WSACleanup();
 }

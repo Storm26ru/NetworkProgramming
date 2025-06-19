@@ -74,7 +74,12 @@ void main()
 	do
 	{
 		iResult = recv(connect_socket, recvbuffer, DEFAULT_BUFFER_LENGTN, 0);
-		if (iResult > 0)cout << "Receved bytes: " << iResult << " Message: " << recvbuffer << endl;
+		if (iResult > 0)
+		{
+			cout << "Receved bytes: " << iResult << " Message: " << recvbuffer << endl;
+			//CONST CHAR sendb[] = "Сообщение получено";
+			//iResult = send(connect_socket, sendb, sizeof(sendb), 0);
+		}
 		else if (iResult == 0)cout << "Connection closing" << endl;
 		else PrintLastError(WSAGetLastError());
 	} while (iResult > 0);
