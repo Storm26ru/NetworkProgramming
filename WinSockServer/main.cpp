@@ -13,6 +13,11 @@ using namespace std;
 
 #define DEFAULT_PORT			"27015"
 #define DEFAULT_BUFFER_LENGTH	1500
+#define MAX_THREADS 3
+HANDLE hThreadArray[MAX_THREADS];
+SOCKET sClientArray[MAX_THREADS];
+
+DWORD WINAPI ThreadProc(SOCKET client_socket);
 
 void main()
 {
@@ -76,25 +81,55 @@ void main()
 	}
 
 	cout << "Waiting for clients..." << endl;
-	SOCKET client_socket = accept(listen_socket,NULL,NULL);
-	if (client_socket == INVALID_SOCKET)
+	INT iCount_client = 0;
+	while (true)
 	{
-		cout << "accept() failed with ";
-		PrintLastError(WSAGetLastError());
-		closesocket(listen_socket);
-		freeaddrinfo(result);
-		WSACleanup();
-		return;
+		SOCKET client_socket = accept(listen_socket, NULL, NULL);
+		/*if (client_socket == INVALID_SOCKET)
+		{
+			cout << "accept() failed with ";
+			PrintLastError(WSAGetLastError());
+			closesocket(listen_socket);
+			freeaddrinfo(result);
+			WSACleanup();
+			return;
+		}*/
+		if (iCount_client < MAX_THREADS)
+		{
+			sClientArray[iCount_client] = client_socket;
+			hThreadArray[iCount_client] = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ThreadProc, (LPVOID)sClientArray[iCount_client], 0, NULL);
+			iCount_client++;
+		}
+		else
+		{
+			CONST CHAR sendbuffer[] = "Connection is currently unavailable, please try again later.";
+			if (send(client_socket, sendbuffer, strlen(sendbuffer), 0) == SOCKET_ERROR)
+			{
+				cout << "send() failed with ";
+				PrintLastError(WSAGetLastError());
+			}
+			closesocket(client_socket);
+		}
 	}
-	sockaddr_in address; //https://club.shelek.ru/viewart.php?id=41
+
+	WaitForMultipleObjects(MAX_THREADS, hThreadArray, TRUE, INFINITE);
+	closesocket(listen_socket);
+	freeaddrinfo(result);
+	WSACleanup();
+}
+
+DWORD WINAPI ThreadProc(SOCKET client_socket)
+{
+	int iResult = 0;
+	CHAR recvbuffer[DEFAULT_BUFFER_LENGTH]{};
+	sockaddr_in address;
 	int len = sizeof(address);
 	ZeroMemory(&address, len);
-	getsockname(client_socket, (sockaddr*)&address, &len);
-	cout << "адрес :"<<inet_ntoa(address.sin_addr) << endl;
-
-	CHAR recvbuffer[DEFAULT_BUFFER_LENGTH]{};
+	getpeername(client_socket, (sockaddr*)&address, &len);
+	cout << "IP-address: " << inet_ntoa(address.sin_addr) << " Port: " << ((address.sin_port & 0xFF) << 8) + (address.sin_port >> 8) << endl;
 	do
 	{
+		ZeroMemory(recvbuffer, sizeof(recvbuffer));
 		iResult = recv(client_socket, recvbuffer, DEFAULT_BUFFER_LENGTH, 0);
 		if (iResult > 0)
 		{
@@ -103,18 +138,22 @@ void main()
 			{
 				cout << "send() failed with ";
 				PrintLastError(WSAGetLastError());
+				closesocket(client_socket);
 				break;
 			}
 		}
-		else if (iResult == 0)cout << "Connection closing..." << endl;
+		else if (iResult == 0)
+		{
+			cout << "Connection closing..." << endl;
+			closesocket(client_socket);
+		}
 		else
 		{
 			cout << "recv() failed with ";
 			PrintLastError(WSAGetLastError());
+			closesocket(client_socket);
 		}
 	} while (iResult > 0);
-	closesocket(client_socket);
-	closesocket(listen_socket);
-	freeaddrinfo(result);
-	WSACleanup();
+
+	return 1;
 }

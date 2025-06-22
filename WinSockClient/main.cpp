@@ -13,12 +13,13 @@ using namespace std;
 
 #define DEFAULT_PORT "27015"
 #define DEFAULT_BUFFER_LENGTN 1500
+#define SORY "Connection is currently unavailable, please try again later."
 
 void main()
 {
 	setlocale(LC_ALL, "");
 	cout << "WinSock Client" << endl;
-	
+
 	WSADATA wsaData;
 	INT iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if (iResult)
@@ -26,7 +27,7 @@ void main()
 		cout << "WSAStartup() failed with code " << iResult << endl;
 		return;
 	}
-	
+
 	addrinfo* result = NULL;
 	addrinfo hints;
 	ZeroMemory(&hints, sizeof(hints));
@@ -59,7 +60,7 @@ void main()
 		WSACleanup();
 		return;
 	}
-	
+
 	CONST CHAR sendbuffer[] = "Hellow Server, I am client ";
 	CHAR recvbuffer[DEFAULT_BUFFER_LENGTN]{};
 	iResult = send(connect_socket, sendbuffer, sizeof(sendbuffer), 0);
@@ -77,8 +78,6 @@ void main()
 		if (iResult > 0)
 		{
 			cout << "Receved bytes: " << iResult << " Message: " << recvbuffer << endl;
-			//CONST CHAR sendb[] = "Сообщение получено";
-			//iResult = send(connect_socket, sendb, sizeof(sendb), 0);
 		}
 		else if (iResult == 0)cout << "Connection closing" << endl;
 		else PrintLastError(WSAGetLastError());
@@ -89,6 +88,7 @@ void main()
 	closesocket(connect_socket);
 	freeaddrinfo(result);
 	WSACleanup();
+	system("PAUSE");
 
 
 
