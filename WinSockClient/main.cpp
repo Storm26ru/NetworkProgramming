@@ -61,9 +61,9 @@ void main()
 		return;
 	}
 
-	CONST CHAR sendbuffer[] = "Hellow Server, I am client ";
+	CHAR sendbuffer[DEFAULT_BUFFER_LENGTN]= "Hello Server, I am client";
 	CHAR recvbuffer[DEFAULT_BUFFER_LENGTN]{};
-	iResult = send(connect_socket, sendbuffer, sizeof(sendbuffer), 0);
+	iResult = send(connect_socket, sendbuffer, strlen(sendbuffer), 0);
 	if (iResult == SOCKET_ERROR)
 	{
 		PrintLastError(WSAGetLastError());
@@ -74,10 +74,15 @@ void main()
 	}
 	do
 	{
+		ZeroMemory(recvbuffer, DEFAULT_BUFFER_LENGTN);
+		ZeroMemory(sendbuffer, DEFAULT_BUFFER_LENGTN);
 		iResult = recv(connect_socket, recvbuffer, DEFAULT_BUFFER_LENGTN, 0);
 		if (iResult > 0)
 		{
 			cout << "Receved bytes: " << iResult << " Message: " << recvbuffer << endl;
+			cout << "Введите сообщение: ";
+			cin.getline(sendbuffer, DEFAULT_BUFFER_LENGTN);
+			if (send(connect_socket, sendbuffer, strlen(sendbuffer), 0) == SOCKET_ERROR) PrintLastError(WSAGetLastError());
 		}
 		else if (iResult == 0)cout << "Connection closing" << endl;
 		else PrintLastError(WSAGetLastError());

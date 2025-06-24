@@ -16,6 +16,7 @@ using namespace std;
 #define MAX_THREADS 3
 HANDLE hThreadArray[MAX_THREADS];
 SOCKET sClientArray[MAX_THREADS];
+INT iCount_client = 0;
 
 DWORD WINAPI ThreadProc(SOCKET client_socket);
 
@@ -81,7 +82,6 @@ void main()
 	}
 
 	cout << "Waiting for clients..." << endl;
-	INT iCount_client = 0;
 	while (true)
 	{
 		SOCKET client_socket = accept(listen_socket, NULL, NULL);
@@ -134,12 +134,15 @@ DWORD WINAPI ThreadProc(SOCKET client_socket)
 		if (iResult > 0)
 		{
 			cout << "Received Bytes: " << iResult << ", Message: " << recvbuffer << endl;
-			if (send(client_socket, recvbuffer, strlen(recvbuffer), 0) == SOCKET_ERROR)
+			for (int i = 0; i < iCount_client; i++)
 			{
-				cout << "send() failed with ";
-				PrintLastError(WSAGetLastError());
-				closesocket(client_socket);
-				break;
+				if (send(sClientArray[i], recvbuffer, strlen(recvbuffer), 0) == SOCKET_ERROR)
+				{
+					cout << "send() failed with ";
+					PrintLastError(WSAGetLastError());
+					closesocket(client_socket);
+					break;
+				}
 			}
 		}
 		else if (iResult == 0)
