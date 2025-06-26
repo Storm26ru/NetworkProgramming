@@ -70,8 +70,6 @@ void main()
 		WSACleanup();
 		return;
 	}
-
-	
 	//CHAR recvbuffer[DEFAULT_BUFFER_LENGTN]{};
 	/*iResult = send(connect_socket, sendbuffer, strlen(sendbuffer), 0);
 	if (iResult == SOCKET_ERROR)
@@ -82,8 +80,8 @@ void main()
 		WSACleanup();
 		return;
 	}*/
-	Recv(connect_socket);
-	HANDLE hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)Send, (LPVOID)connect_socket, 0, NULL);
+	HANDLE hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)Recv, (LPVOID)connect_socket, 0, NULL);
+	Send(connect_socket);
 
 
 	iResult = shutdown(connect_socket, SD_SEND);
@@ -105,7 +103,9 @@ VOID Recv(SOCKET connect_socket)
 		iResult = recv(connect_socket, recvbuffer, DEFAULT_BUFFER_LENGTN, 0);
 		if (iResult > 0)
 		{
+			cout << endl;
 			cout << "Receved bytes: " << iResult << " Message: " << recvbuffer << endl;
+			cout << "Введите сообщение: ";
 		}
 		else if (iResult == 0)cout << "Connection closing" << endl;
 		else PrintLastError(WSAGetLastError());
@@ -133,9 +133,8 @@ VOID Send(SOCKET connect_socket)
 		//	WSACleanup();
 		//	return;
 		//}
-		cout << iResult << " Byte sent" << endl;
 		ZeroMemory(sendbuffer, DEFAULT_BUFFER_LENGTN);
-		cout << "Введите сообщение: ";
+		//cout << "Введите сообщение: ";
 		SetConsoleCP(1251);
 		cin.getline(sendbuffer, DEFAULT_BUFFER_LENGTN);
 		SetConsoleCP(866);

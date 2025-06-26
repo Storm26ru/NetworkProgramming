@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 
 #include <WinSock2.h>
@@ -122,26 +123,32 @@ DWORD WINAPI ThreadProc(SOCKET client_socket)
 {
 	int iResult = 0;
 	CHAR recvbuffer[DEFAULT_BUFFER_LENGTH]{};
+	CHAR IPaddress[DEFAULT_BUFFER_LENGTH]{};
 	sockaddr_in address;
 	int len = sizeof(address);
 	ZeroMemory(&address, len);
 	getpeername(client_socket, (sockaddr*)&address, &len);
-	cout << "IP-address: " << inet_ntoa(address.sin_addr) << " Port: " << ((address.sin_port & 0xFF) << 8) + (address.sin_port >> 8) << endl;
+	sprintf(IPaddress, ", Socket: %s:%i", inet_ntoa(address.sin_addr), ((address.sin_port & 0xFF) << 8) + (address.sin_port >> 8));
+	//cout << "IP-address: " << inet_ntoa(address.sin_addr) << " Port: " << ((address.sin_port & 0xFF) << 8) + (address.sin_port >> 8) << endl;
 	do
 	{
 		ZeroMemory(recvbuffer, sizeof(recvbuffer));
 		iResult = recv(client_socket, recvbuffer, DEFAULT_BUFFER_LENGTH, 0);
 		if (iResult > 0)
 		{
-			cout << "Received Bytes: " << iResult << ", Message: " << recvbuffer << endl;
+			//cout <<IPaddress<<", Received Bytes: " << iResult << ", Message: " << recvbuffer<< endl;
+			cout <<"Received Bytes: " << iResult << ", Message: " << recvbuffer<<IPaddress<< endl;
 			for (int i = 0; i < iCount_client; i++)
 			{
-				if (send(sClientArray[i], recvbuffer, strlen(recvbuffer), 0) == SOCKET_ERROR)
+				if (sClientArray[i]!=client_socket)
 				{
-					cout << "send() failed with ";
-					PrintLastError(WSAGetLastError());
-					closesocket(client_socket);
-					break;
+					if (send(sClientArray[i], recvbuffer, strlen(recvbuffer), 0) == SOCKET_ERROR)
+					{
+						cout << "send() failed with ";
+						PrintLastError(WSAGetLastError());
+						closesocket(client_socket);
+						break;
+					}
 				}
 			}
 		}
