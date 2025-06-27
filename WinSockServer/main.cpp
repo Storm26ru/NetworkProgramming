@@ -86,15 +86,15 @@ void main()
 	while (true)
 	{
 		SOCKET client_socket = accept(listen_socket, NULL, NULL);
-		/*if (client_socket == INVALID_SOCKET)
+		if (client_socket == INVALID_SOCKET)
 		{
 			cout << "accept() failed with ";
 			PrintLastError(WSAGetLastError());
-			closesocket(listen_socket);
-			freeaddrinfo(result);
-			WSACleanup();
-			return;
-		}*/
+			//closesocket(listen_socket);
+			//freeaddrinfo(result);
+			//WSACleanup();
+			break;
+		}
 		if (iCount_client < MAX_THREADS)
 		{
 			sClientArray[iCount_client] = client_socket;
@@ -128,21 +128,21 @@ DWORD WINAPI ThreadProc(SOCKET client_socket)
 	int len = sizeof(address);
 	ZeroMemory(&address, len);
 	getpeername(client_socket, (sockaddr*)&address, &len);
-	sprintf(IPaddress, ", Socket: %s:%i", inet_ntoa(address.sin_addr), ((address.sin_port & 0xFF) << 8) + (address.sin_port >> 8));
-	//cout << "IP-address: " << inet_ntoa(address.sin_addr) << " Port: " << ((address.sin_port & 0xFF) << 8) + (address.sin_port >> 8) << endl;
+	sprintf(IPaddress, "%s:%i ", inet_ntoa(address.sin_addr), ((address.sin_port & 0xFF) << 8) + (address.sin_port >> 8));
 	do
 	{
 		ZeroMemory(recvbuffer, sizeof(recvbuffer));
 		iResult = recv(client_socket, recvbuffer, DEFAULT_BUFFER_LENGTH, 0);
 		if (iResult > 0)
 		{
-			//cout <<IPaddress<<", Received Bytes: " << iResult << ", Message: " << recvbuffer<< endl;
-			cout <<"Received Bytes: " << iResult << ", Message: " << recvbuffer<<IPaddress<< endl;
+			cout <<"Received Bytes: " << iResult << ", Message: " << recvbuffer<<", Socket: " << IPaddress << endl;
 			for (int i = 0; i < iCount_client; i++)
 			{
-				if (sClientArray[i]!=client_socket)
+				if (sClientArray[i] != client_socket)
 				{
-					if (send(sClientArray[i], recvbuffer, strlen(recvbuffer), 0) == SOCKET_ERROR)
+					CHAR sendbuffer[DEFAULT_BUFFER_LENGTH]{};
+					sprintf(sendbuffer, "%s%s", IPaddress, recvbuffer);
+					if (send(sClientArray[i], sendbuffer, strlen(sendbuffer), 0) == SOCKET_ERROR)
 					{
 						cout << "send() failed with ";
 						PrintLastError(WSAGetLastError());

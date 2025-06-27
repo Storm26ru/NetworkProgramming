@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <iostream>
 #include<FormatLastError.h>
+#include <sstream>
 
 
 using namespace std;
@@ -29,6 +30,7 @@ void main()
 {
 	setlocale(LC_ALL, "");
 	cout << "WinSock Client" << endl;
+	cout << "Введите сообщение: ";
 
 	WSADATA wsaData;
 	INT iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -55,6 +57,7 @@ void main()
 	SOCKET connect_socket = socket(hints.ai_family, hints.ai_socktype, hints.ai_protocol);
 	if (connect_socket == INVALID_SOCKET)
 	{
+		cout << "socket() faied " << endl;
 		PrintLastError(WSAGetLastError());
 		freeaddrinfo(result);
 		WSACleanup();
@@ -64,6 +67,7 @@ void main()
 	iResult = connect(connect_socket, result->ai_addr, result->ai_addrlen);
 	if (iResult)
 	{
+		cout << "connect() failed " << endl;
 		PrintLastError(WSAGetLastError());
 		closesocket(connect_socket);
 		freeaddrinfo(result);
@@ -103,12 +107,17 @@ VOID Recv(SOCKET connect_socket)
 		iResult = recv(connect_socket, recvbuffer, DEFAULT_BUFFER_LENGTN, 0);
 		if (iResult > 0)
 		{
-			cout << endl;
-			cout << "Receved bytes: " << iResult << " Message: " << recvbuffer << endl;
+			CHAR IPaddress[DEFAULT_BUFFER_LENGTN]{};
+			stringstream sStream;  sStream << recvbuffer; sStream >> IPaddress;
+			ZeroMemory(recvbuffer, DEFAULT_BUFFER_LENGTN);
+			sStream.getline(recvbuffer, DEFAULT_BUFFER_LENGTN);
+			sStream.clear();
+			cout << "-------------------------------------------------------" << endl;
+			cout << "From: " << IPaddress << ", Receved bytes: " << iResult << ", Message: " << recvbuffer << endl;
 			cout << "Введите сообщение: ";
 		}
 		else if (iResult == 0)cout << "Connection closing" << endl;
-		else PrintLastError(WSAGetLastError());
+		else PrintLastError(WSAGetLastError()); 
 		ZeroMemory(recvbuffer, DEFAULT_BUFFER_LENGTN);
 	} while (iResult > 0);
 }
