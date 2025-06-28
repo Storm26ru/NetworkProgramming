@@ -138,7 +138,7 @@ DWORD WINAPI ThreadProc(SOCKET client_socket)
 			cout <<"Received Bytes: " << iResult << ", Message: " << recvbuffer<<", Socket: " << IPaddress << endl;
 			for (int i = 0; i < iCount_client; i++)
 			{
-				if (sClientArray[i] != client_socket)
+				if (sClientArray[i] != client_socket && sClientArray[i]!= NULL)
 				{
 					CHAR sendbuffer[DEFAULT_BUFFER_LENGTH]{};
 					sprintf(sendbuffer, "%s%s", IPaddress, recvbuffer);
@@ -154,6 +154,15 @@ DWORD WINAPI ThreadProc(SOCKET client_socket)
 		}
 		else if (iResult == 0)
 		{
+			for (int i = 0; i < iCount_client; i++)
+			{
+				if (sClientArray[i] == client_socket)
+				{
+					sClientArray[i] = NULL;
+					iCount_client--;
+				}
+			}
+
 			cout << "Connection closing..." << endl;
 			closesocket(client_socket);
 		}

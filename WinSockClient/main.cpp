@@ -21,9 +21,10 @@ using namespace std;
 #define DEFAULT_PORT "27015"
 #define DEFAULT_BUFFER_LENGTN 1500
 #define SORY "Connection is currently unavailable, please try again later."
+BOOL bExit = TRUE;
 
 VOID Recv(SOCKET connect_socket);
-VOID Send(SOCKET connect_socket);
+//VOID Send(SOCKET connect_socket);
 
 
 void main()
@@ -74,20 +75,29 @@ void main()
 		WSACleanup();
 		return;
 	}
-	//CHAR recvbuffer[DEFAULT_BUFFER_LENGTN]{};
-	/*iResult = send(connect_socket, sendbuffer, strlen(sendbuffer), 0);
-	if (iResult == SOCKET_ERROR)
-	{
-		PrintLastError(WSAGetLastError());
-		closesocket(connect_socket);
-		freeaddrinfo(result);
-		WSACleanup();
-		return;
-	}*/
+
 	HANDLE hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)Recv, (LPVOID)connect_socket, 0, NULL);
-	Send(connect_socket);
-
-
+	//Send(connect_socket);
+	CHAR sendbuffer[DEFAULT_BUFFER_LENGTN] = "Hello Server, I am client";
+	do
+	{
+		iResult = send(connect_socket, sendbuffer, strlen(sendbuffer), 0);
+		if (iResult == SOCKET_ERROR)
+		{
+			cout <<"send() failed " << endl;
+			PrintLastError(WSAGetLastError());
+			closesocket(connect_socket);
+			freeaddrinfo(result);
+			WSACleanup();
+			return;
+		}
+		ZeroMemory(sendbuffer, DEFAULT_BUFFER_LENGTN);
+		SetConsoleCP(1251);
+		cin.getline(sendbuffer, DEFAULT_BUFFER_LENGTN);
+		SetConsoleCP(866);
+	} while (iResult > 0 && strcmp(sendbuffer, "exit"));
+	bExit = FALSE;
+	CloseHandle(hThread);
 	iResult = shutdown(connect_socket, SD_SEND);
 	if (iResult == SOCKET_ERROR) PrintLastError(WSAGetLastError());
 	closesocket(connect_socket);
@@ -116,38 +126,42 @@ VOID Recv(SOCKET connect_socket)
 			cout << "From: " << IPaddress << ", Receved bytes: " << iResult << ", Message: " << recvbuffer << endl;
 			cout << "Введите сообщение: ";
 		}
-		else if (iResult == 0)cout << "Connection closing" << endl;
+		else if (iResult == 0)
+		{
+			cout << "Connection closing" << endl; break;
+		}
 		else PrintLastError(WSAGetLastError()); 
+		if (strcmp(recvbuffer, "Connection is currently unavailable, please try again later.") == 0) break;
 		ZeroMemory(recvbuffer, DEFAULT_BUFFER_LENGTN);
-	} while (iResult > 0);
+	} while (bExit);
 }
-VOID Send(SOCKET connect_socket)
-{
-	INT iResult = 0;
-	CHAR sendbuffer[DEFAULT_BUFFER_LENGTN] = "Hello Server, I am client";
-	do
-	{
-		//ZeroMemory(recvbuffer, DEFAULT_BUFFER_LENGTN);
-		//iResult = recv(connect_socket, recvbuffer, DEFAULT_BUFFER_LENGTN, 0);
-		iResult = send(connect_socket, sendbuffer, strlen(sendbuffer), 0);
-		//if (iResult == SOCKET_ERROR)
-		//{
-		//	/*cout << "Receved bytes: " << iResult << " Message: " << recvbuffer << endl;
-		//	cout << "Введите сообщение: ";
-		//	cin.getline(sendbuffer, DEFAULT_BUFFER_LENGTN);
-		//	if (send(connect_socket, sendbuffer, strlen(sendbuffer), 0) == SOCKET_ERROR) PrintLastError(WSAGetLastError());*/
-		//	PrintLastError(WSAGetLastError());
-		//	closesocket(connect_socket);
-		//	freeaddrinfo(result);
-		//	WSACleanup();
-		//	return;
-		//}
-		ZeroMemory(sendbuffer, DEFAULT_BUFFER_LENGTN);
-		//cout << "Введите сообщение: ";
-		SetConsoleCP(1251);
-		cin.getline(sendbuffer, DEFAULT_BUFFER_LENGTN);
-		SetConsoleCP(866);
-		//else if (iResult == 0)cout << "Connection closing" << endl;
-		//else PrintLastError(WSAGetLastError());
-	} while (iResult > 0);
-}
+//VOID Send(SOCKET connect_socket)
+//{
+//	INT iResult = 0;
+//	CHAR sendbuffer[DEFAULT_BUFFER_LENGTN] = "Hello Server, I am client";
+//	do
+//	{
+//		//ZeroMemory(recvbuffer, DEFAULT_BUFFER_LENGTN);
+//		//iResult = recv(connect_socket, recvbuffer, DEFAULT_BUFFER_LENGTN, 0);
+//		iResult = send(connect_socket, sendbuffer, strlen(sendbuffer), 0);
+//		//if (iResult == SOCKET_ERROR)
+//		//{
+//		//	/*cout << "Receved bytes: " << iResult << " Message: " << recvbuffer << endl;
+//		//	cout << "Введите сообщение: ";
+//		//	cin.getline(sendbuffer, DEFAULT_BUFFER_LENGTN);
+//		//	if (send(connect_socket, sendbuffer, strlen(sendbuffer), 0) == SOCKET_ERROR) PrintLastError(WSAGetLastError());*/
+//		//	PrintLastError(WSAGetLastError());
+//		//	closesocket(connect_socket);
+//		//	freeaddrinfo(result);
+//		//	WSACleanup();
+//		//	return;
+//		//}
+//		ZeroMemory(sendbuffer, DEFAULT_BUFFER_LENGTN);
+//		//cout << "Введите сообщение: ";
+//		SetConsoleCP(1251);
+//		cin.getline(sendbuffer, DEFAULT_BUFFER_LENGTN);
+//		SetConsoleCP(866);
+//		//else if (iResult == 0)cout << "Connection closing" << endl;
+//		//else PrintLastError(WSAGetLastError());
+//	} while (iResult > 0 && strcmp(sendbuffer,"exit"));
+//}
