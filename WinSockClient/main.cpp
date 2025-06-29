@@ -117,21 +117,24 @@ VOID Recv(SOCKET connect_socket)
 		iResult = recv(connect_socket, recvbuffer, DEFAULT_BUFFER_LENGTN, 0);
 		if (iResult > 0)
 		{
-			CHAR IPaddress[DEFAULT_BUFFER_LENGTN]{};
-			stringstream sStream;  sStream << recvbuffer; sStream >> IPaddress;
-			ZeroMemory(recvbuffer, DEFAULT_BUFFER_LENGTN);
-			sStream.getline(recvbuffer, DEFAULT_BUFFER_LENGTN);
-			sStream.clear();
-			cout << "-------------------------------------------------------" << endl;
-			cout << "From: " << IPaddress << ", Receved bytes: " << iResult << ", Message: " << recvbuffer << endl;
-			cout << "Введите сообщение: ";
+			if (strcmp(recvbuffer, "Connection is currently unavailable, please try again later.") == 0) cout <<"\n"<< recvbuffer << endl;
+			else
+			{
+				CHAR IPaddress[DEFAULT_BUFFER_LENGTN]{};
+				stringstream sStream;  sStream << recvbuffer; sStream >> IPaddress;
+				ZeroMemory(recvbuffer, DEFAULT_BUFFER_LENGTN);
+				sStream.getline(recvbuffer, DEFAULT_BUFFER_LENGTN);
+				sStream.clear();
+				cout << "-------------------------------------------------------" << endl;
+				cout << "From: " << IPaddress << ", Receved bytes: " << iResult << ", Message: " << recvbuffer << endl;
+				cout << "Введите сообщение: ";
+			}
 		}
 		else if (iResult == 0)
 		{
 			cout << "Connection closing" << endl; break;
 		}
-		else PrintLastError(WSAGetLastError()); 
-		if (strcmp(recvbuffer, "Connection is currently unavailable, please try again later.") == 0) break;
+		else PrintLastError(WSAGetLastError());
 		ZeroMemory(recvbuffer, DEFAULT_BUFFER_LENGTN);
 	} while (bExit);
 }

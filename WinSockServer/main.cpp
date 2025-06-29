@@ -104,12 +104,13 @@ void main()
 		else
 		{
 			CONST CHAR sendbuffer[] = "Connection is currently unavailable, please try again later.";
-			if (send(client_socket, sendbuffer, strlen(sendbuffer), 0) == SOCKET_ERROR)
+			CHAR buffer[DEFAULT_BUFFER_LENGTH]{};
+			INT iResult = recv(client_socket, buffer, DEFAULT_BUFFER_LENGTH, 0);
+			if (iResult > 0)
 			{
-				cout << "send() failed with ";
-				PrintLastError(WSAGetLastError());
+				INT iSendResult = send(client_socket, sendbuffer, strlen(sendbuffer), 0);
+				closesocket(client_socket);
 			}
-			closesocket(client_socket);
 		}
 	}
 
@@ -154,12 +155,17 @@ DWORD WINAPI ThreadProc(SOCKET client_socket)
 		}
 		else if (iResult == 0)
 		{
-			for (int i = 0; i < iCount_client; i++)
+			for (int i = 0; i < sizeof(sClientArray)/sizeof(sClientArray[0]); i++)
 			{
 				if (sClientArray[i] == client_socket)
 				{
 					sClientArray[i] = NULL;
 					iCount_client--;
+				}
+				if (sClientArray[i] == NULL && i < (sizeof(sClientArray) / sizeof(sClientArray[0])) - 1)
+				{
+					sClientArray[i] = sClientArray[i + 1];
+					sClientArray[i + 1] = NULL;
 				}
 			}
 
